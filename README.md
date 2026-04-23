@@ -1,21 +1,14 @@
 # Sistema de Gerenciamento de Contratos de Internet
-
 ## Disciplina
 Desenvolvimento Web II – PPGTI / UFRN  
 Prof. Dr. Jean Mário Moreira de Lima
-
 ---
-
 ## Descrição do Projeto
-
 Este projeto consiste no desenvolvimento de uma API REST utilizando Spring Boot e Spring Data JPA para gerenciamento de um sistema de contratos de serviços de internet.
 
 O sistema permite o cadastro e gerenciamento de clientes, planos, serviços adicionais e contratos de internet, além da geração automática de logs de auditoria em uma segunda base de dados.
-
 ---
-
 ## Domínio Escolhido
-
 O domínio escolhido foi um Sistema de Provedor de Internet, contemplando:
 
 - Clientes
@@ -23,11 +16,8 @@ O domínio escolhido foi um Sistema de Provedor de Internet, contemplando:
 - Serviços Adicionais
 - Contratos de Internet
 - Auditoria de operações
-
 ---
-
 ## Modelagem de Dados >>>
-
 ### Entidades Principais
 
 - Cliente
@@ -35,11 +25,8 @@ O domínio escolhido foi um Sistema de Provedor de Internet, contemplando:
 - ServicoAdicional
 - ContratoInternet
 - LogAuditoria (base de auditoria)
-
 ---
-
 ## Relacionamentos
-
 ### ✔ One-to-Many / Many-to-One
 - Cliente → Contratos (1:N)
 - Plano → Contratos (1:N)
@@ -49,60 +36,60 @@ O domínio escolhido foi um Sistema de Provedor de Internet, contemplando:
 
 ### ✔ Cascata
 - CascadeType.PERSIST aplicado na relação Many-to-Many
-
 ---
-
-## Persistência em Múltiplas Bases
-
-O sistema utiliza duas bases de dados H2:
+## Persistência em Múltiplas Bases de Dados
+O sistema utiliza duas bases de dados H2 configuradas na aplicação:
 
 ### Base Principal (db_principal)
-Responsável pelo domínio principal:
+Responsável pelo armazenamento do domínio principal do sistema:
 - Clientes
 - Planos
-- Contratos
-- Serviços
+- Serviços Adicionais
+- Contratos de Internet
 
 ### Base de Auditoria (db_auditoria)
-Responsável pelo armazenamento de logs:
-
+Responsável pelo armazenamento de logs de auditoria:
 - Registro automático de criação de contratos
 - Data e hora da operação
 - ID do contrato criado
-
 ---
-
 ## Funcionalidade de Auditoria
+A auditoria é implementada diretamente na camada de serviço:
 
+1. Um contrato é salvo na base principal
+2. Após a persistência, um log é criado automaticamente
+3. O log é salvo na base de auditoria
+
+Isso garante rastreabilidade das operações realizadas no sistema.
+---
+## Implementação Técnica
+
+- Uso de duas conexões H2 separadas via configuração Spring Boot
+- Entidade LogAuditoria persistida em base separada
+- Uso de dois repositórios distintos (principal e auditoria)
+- Controle da lógica de auditoria na camada Service
+---
+## Funcionalidade de Auditoria
 Sempre que um novo contrato é criado:
 
 1. O contrato é salvo na base principal
 2. Um log de auditoria é automaticamente gerado
 3. O log é persistido na base de auditoria
-
 ---
-
 ## Validações
-
 O sistema utiliza validações com Bean Validation:
 
 - @NotBlank → campos obrigatórios
 - @NotNull → validação de valores nulos
 - @Valid → validação de DTOs no Controller
-
 ---
-
 ## Consultas Customizadas
-
 Foram implementadas consultas avançadas com Spring Data JPA:
 
 - JPQL com JOIN FETCH para otimização de carregamento
 - Query Nativa (nativeQuery = true) para consultas diretas no banco
-
 ---
-
 ## Endpoints da API
-
 ### Clientes
 - GET /clientes
 - POST /clientes
@@ -119,9 +106,7 @@ Foram implementadas consultas avançadas com Spring Data JPA:
 - GET /contratos
 - GET /contratos/nativo (usando SQL nativo)
 - POST /contratos
-
 ---
-
 ## Tecnologias Utilizadas
 Java 17
 Spring Boot
@@ -168,6 +153,8 @@ Registro automático de auditoria
   "planoId": 1,
   "servicosIds": [1]
 }
+```
+ ## FIM
 
 
 
