@@ -5,24 +5,34 @@ import com.example.entrega02.model.Plano;
 import com.example.entrega02.repository.PlanoRepository;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
-@RequestMapping("/planos")
+@RequestMapping("/api/planos")
 public class PlanoController {
 
     @Autowired
     private PlanoRepository repository;
 
     @GetMapping
-    public List<Plano> listar() {
-        return repository.findAll();
+    public List<PlanoDTO> listar() {
+        return repository.findAll().stream()
+                .map(plano -> new PlanoDTO(
+                        plano.getId(),
+                        plano.getNome(),
+                        plano.getPreco(),
+                        plano.getVelocidadeMbps()
+                ))
+                .toList();
     }
 
     @PostMapping
-    public PlanoDTO salvar(@RequestBody @Valid PlanoDTO dto) {
+    public ResponseEntity<PlanoDTO> salvar(@RequestBody @Valid PlanoDTO dto) {
 
         Plano plano = new Plano();
         plano.setNome(dto.nome());
@@ -31,11 +41,14 @@ public class PlanoController {
 
         Plano salvo = repository.save(plano);
 
-        return new PlanoDTO(
+        PlanoDTO response = new PlanoDTO(
                 salvo.getId(),
                 salvo.getNome(),
                 salvo.getPreco(),
                 salvo.getVelocidadeMbps()
         );
+        
+        URI location = URI.create(String.format("/api/planos/%d", salvo.getId()));
+        return ResponseEntity.created(location).body(response);
     }
 }

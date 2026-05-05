@@ -1,23 +1,52 @@
 # Sistema de Gerenciamento de Contratos de Internet
+
 ## Disciplina
 Desenvolvimento Web II – PPGTI / UFRN  
-Prof. Dr. Jean Mário Moreira de Lima
----
-## Descrição do Projeto
-Este projeto consiste no desenvolvimento de uma API REST utilizando Spring Boot e Spring Data JPA para gerenciamento de um sistema de contratos de serviços de internet.
+Prof. Dr. Jean Mário Moreira de Lima  
 
-O sistema permite o cadastro e gerenciamento de clientes, planos, serviços adicionais e contratos de internet, além da geração automática de logs de auditoria em uma segunda base de dados.
 ---
-## Domínio Escolhido
-O domínio escolhido foi um Sistema de Provedor de Internet, contemplando:
+
+## Repositório
+https://github.com/victorfibra/devweb2-entrega03
+
+---
+
+## Descrição do Projeto
+
+Este projeto consiste no desenvolvimento de uma API REST utilizando **Spring Boot** e **Spring Data JPA** para gerenciamento de um sistema de contratos de serviços de internet.
+
+O sistema permite o cadastro e gerenciamento de clientes, planos, serviços adicionais e contratos de internet, além da implementação de auditoria com persistência em base de dados separada.
+
+---
+
+## Justificativa da Escolha do Domínio
+
+O domínio de **provedor de serviços de internet** foi escolhido por ser um cenário real e amplamente utilizado no mercado, envolvendo múltiplas entidades relacionadas e regras de negócio bem definidas.
+
+Além disso, esse domínio permite explorar conceitos importantes da disciplina, como:
+
+- Relacionamentos entre entidades (1:N e N:N)
+- Persistência em múltiplas bases de dados
+- Uso de DTOs para desacoplamento da API
+- Implementação de auditoria de operações
+- Consultas otimizadas com JPQL e SQL nativo
+
+A escolha também facilita a simulação de um sistema corporativo real, com separação clara entre dados operacionais e logs de auditoria.
+
+---
+
+## Domínio do Sistema
 
 - Clientes
 - Planos de Internet
 - Serviços Adicionais
 - Contratos de Internet
-- Auditoria de operações
+- Logs de Auditoria (base separada)
+
 ---
-## Modelagem de Dados >>>
+
+## Modelagem de Dados
+
 ### Entidades Principais
 
 - Cliente
@@ -25,8 +54,11 @@ O domínio escolhido foi um Sistema de Provedor de Internet, contemplando:
 - ServicoAdicional
 - ContratoInternet
 - LogAuditoria (base de auditoria)
+
 ---
+
 ## Relacionamentos
+
 ### ✔ One-to-Many / Many-to-One
 - Cliente → Contratos (1:N)
 - Plano → Contratos (1:N)
@@ -35,61 +67,83 @@ O domínio escolhido foi um Sistema de Provedor de Internet, contemplando:
 - Contrato ↔ Serviços Adicionais
 
 ### ✔ Cascata
-- CascadeType.PERSIST aplicado na relação Many-to-Many
----
-## Persistência em Múltiplas Bases de Dados
-O sistema utiliza duas bases de dados H2 configuradas na aplicação:
+- CascadeType.PERSIST aplicado no relacionamento de serviços
 
-### Base Principal (db_principal)
-Responsável pelo armazenamento do domínio principal do sistema:
+---
+
+## Persistência em Múltiplas Bases de Dados
+
+O sistema utiliza duas bases H2 independentes:
+
+### Base Principal (`db_principal`)
+Responsável pelos dados do domínio principal:
 - Clientes
 - Planos
-- Serviços Adicionais
-- Contratos de Internet
+- Serviços
+- Contratos
 
-### Base de Auditoria (db_auditoria)
-Responsável pelo armazenamento de logs de auditoria:
-- Registro automático de criação de contratos
-- Data e hora da operação
-- ID do contrato criado
+### Base de Auditoria (`db_auditoria`)
+Responsável pelos logs do sistema:
+- Registro de criação de contratos
+- Data e hora das operações
+- ID do contrato
+
 ---
-## Funcionalidade de Auditoria
-A auditoria é implementada diretamente na camada de serviço:
 
-1. Um contrato é salvo na base principal
-2. Após a persistência, um log é criado automaticamente
+## Funcionalidade de Auditoria
+
+Sempre que um contrato é criado:
+
+1. O contrato é persistido na base principal
+2. Um log é automaticamente gerado
 3. O log é salvo na base de auditoria
 
-Isso garante rastreabilidade das operações realizadas no sistema.
----
-## Implementação Técnica
+Isso garante rastreabilidade das operações do sistema.
 
-- Uso de duas conexões H2 separadas via configuração Spring Boot
-- Entidade LogAuditoria persistida em base separada
-- Uso de dois repositórios distintos (principal e auditoria)
-- Controle da lógica de auditoria na camada Service
 ---
-## Funcionalidade de Auditoria
-Sempre que um novo contrato é criado:
 
-1. O contrato é salvo na base principal
-2. Um log de auditoria é automaticamente gerado
-3. O log é persistido na base de auditoria
+## Arquitetura da Aplicação
+
+- Controller (camada de API)
+- Service (regras de negócio)
+- Repository (persistência)
+- DTO (entrada e saída)
+- Model (entidades)
+- Audit (base separada)
+
 ---
+
+## DTOs
+
+### Entrada (Request)
+Utilizados para criação e atualização de contratos:
+
+- Validações com Bean Validation (@NotNull, @NotBlank)
+
+### Saída (Response)
+- Exposição controlada de dados
+- Ocultação de entidades completas
+- Retorno apenas de IDs relacionados
+
+---
+
 ## Validações
-O sistema utiliza validações com Bean Validation:
 
-- @NotBlank → campos obrigatórios
-- @NotNull → validação de valores nulos
-- @Valid → validação de DTOs no Controller
+- `@NotNull`
+- `@NotBlank`
+- `@Valid`
+
 ---
+
 ## Consultas Customizadas
-Foram implementadas consultas avançadas com Spring Data JPA:
 
-- JPQL com JOIN FETCH para otimização de carregamento
-- Query Nativa (nativeQuery = true) para consultas diretas no banco
+- JPQL com `JOIN FETCH` para evitar LazyInitializationException
+- SQL nativo para consultas diretas
+
 ---
+
 ## Endpoints da API
+
 ### Clientes
 - GET /clientes
 - POST /clientes
@@ -104,57 +158,49 @@ Foram implementadas consultas avançadas com Spring Data JPA:
 
 ### Contratos
 - GET /contratos
-- GET /contratos/nativo (usando SQL nativo)
+- GET /contratos/nativo
 - POST /contratos
----
-## Tecnologias Utilizadas
-Java 17
-Spring Boot
-Spring Data JPA
-Hibernate
-Banco H2 (duas instâncias em memória)
-Maven
+- PUT /contratos/{id}
+- DELETE /contratos/{id}
 
-## Estrutura do Projeto
-controller/
-dto/
-model/
-model/audit/
-repository/
-repository/audit/
-service/
-config/
+---
+
+## Tecnologias Utilizadas
+
+- Java 17
+- Spring Boot
+- Spring Data JPA
+- Spring Security
+- Hibernate
+- H2 Database (múltiplas instâncias)
+- Maven
+
+---
+
+## Segurança (Spring Security)
+
+O sistema implementa controle de acesso baseado em roles:
+
+- ROLE_MASTER
+- ROLE_CONTRIBUTOR
+- ROLE_AUDITOR
+
+### Regras de acesso:
+- Público: endpoints informativos
+- Todas as roles: listagens
+- Roles específicas: criação, atualização e exclusão
+
+---
 
 ## Como Executar
+
+```bash
 ./mvnw spring-boot:run
 
-A aplicação será executada em:
-http://localhost:8080
-
-Console H2:
-http://localhost:8080/h2-console
-
-## Observações Finais
-Este projeto foi desenvolvido com foco em:
-
-Arquitetura em camadas
-Separação de responsabilidades
-Persistência em múltiplas bases de dados
-Boas práticas com DTOs
-Controle de relacionamento entre entidades
-Registro automático de auditoria
-
-## Exemplo de JSON (Contrato)
-
-```json
+Exemplo de JSON (Contrato)
 {
   "dataAtivacao": "2026-04-23",
   "clienteId": 1,
   "planoId": 1,
   "servicosIds": [1]
 }
-```
- ## FIM
-
-
-

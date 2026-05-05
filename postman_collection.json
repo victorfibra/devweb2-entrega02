@@ -1,8 +1,8 @@
 {
   "info": {
-    "name": "Entrega 02 - Provedor Internet",
-    "_postman_id": "b1c2d3e4-f5a6-7890-abcd-1234567890ab",
-    "description": "Collection para testes da API de Provedor de Internet",
+    "name": "Entrega 03 - Provedor Internet",
+    "_postman_id": "a9f3c1b2-7d6e-4c11-9c2a-9f1234567890",
+    "description": "Collection para testes da API de Provedor de Internet (Spring Boot + JWT + JPA + DTO + Auditoria)",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [
@@ -13,10 +13,12 @@
           "name": "POST Cliente",
           "request": {
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"nome\": \"João\"\n}"
+              "raw": "{\n  \"nome\": \"João Silva\"\n}"
             },
             "url": {
               "raw": "http://localhost:8080/clientes",
@@ -49,10 +51,12 @@
           "name": "POST Plano",
           "request": {
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"nome\": \"Plano 200MB\",\n  \"preco\": 99.9,\n  \"velocidadeMbps\": 200\n}"
+              "raw": "{\n  \"nome\": \"Plano 300MB\",\n  \"preco\": 99.90,\n  \"velocidadeMbps\": 300\n}"
             },
             "url": {
               "raw": "http://localhost:8080/planos",
@@ -85,7 +89,9 @@
           "name": "POST Servico",
           "request": {
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"nome\": \"IP Fixo\"\n}"
@@ -121,10 +127,12 @@
           "name": "POST Contrato",
           "request": {
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"dataAtivacao\": \"2026-04-23\",\n  \"clienteId\": 1,\n  \"planoId\": 1,\n  \"servicosIds\": [1]\n}"
+              "raw": "{\n  \"dataAtivacao\": \"2026-04-23\",\n  \"clienteId\": 1,\n  \"planoId\": 1,\n  \"servicosIds\": [1, 2]\n}"
             },
             "url": {
               "raw": "http://localhost:8080/contratos",
@@ -149,7 +157,7 @@
           }
         },
         {
-          "name": "GET Contratos Native",
+          "name": "GET Contratos (Nativo)",
           "request": {
             "method": "GET",
             "url": {

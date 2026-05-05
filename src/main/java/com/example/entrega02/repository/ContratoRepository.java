@@ -8,8 +8,10 @@ import java.util.List;
 
 public interface ContratoRepository extends JpaRepository<ContratoInternet, Long> {
 
-    // JPQL com JOIN FETCH
-    @Query("SELECT c FROM ContratoInternet c JOIN FETCH c.cliente")
+    // JPQL com JOIN FETCH para evitar LazyInitializationException
+    @Query("SELECT DISTINCT c FROM ContratoInternet c " +
+           "JOIN FETCH c.cliente " +
+           "JOIN FETCH c.plano ")
     List<ContratoInternet> buscarComCliente();
 
     // SQL NATIVO

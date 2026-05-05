@@ -7,10 +7,16 @@ public class Plano {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
 
+    @Column(name = "nome")
     private String nome;
+
+    @Column(name = "velocidade_mbps")
     private Double velocidadeMbps;
+
+    @Column(name = "preco")
     private Double preco;
 
     public Plano() {}

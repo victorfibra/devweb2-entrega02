@@ -1,0 +1,1 @@
+-Xlint:"all\" foi inesperado neste momento.

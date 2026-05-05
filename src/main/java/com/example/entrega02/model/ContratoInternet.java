@@ -9,8 +9,10 @@ public class ContratoInternet {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
 
+    @Column(name = "data_ativacao")
     private LocalDate dataAtivacao;
 
     // 🔗 Muitos contratos para UM cliente
